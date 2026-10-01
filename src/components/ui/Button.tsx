@@ -1,18 +1,61 @@
 import React from "react";
 
-export type ButtonVariant = "primary" | "black&white" | "simple" | "glass";
+/**
+ * primary · relleno oliva, para el lienzo crema.
+ * light   · casi blanco, la acción principal sobre imagen u oliva.
+ * glass   · liquid glass, acción secundaria sobre imagen u oliva.
+ * simple  · contorno discreto sobre el lienzo.
+ */
+export type ButtonVariant = "primary" | "light" | "glass" | "simple";
 export type ButtonSize = "sm" | "md" | "lg";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type BaseProps = {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  icon?: React.ReactNode;
-  isFalse?: boolean;
-  isImage?: boolean;
-  href?: string;
+  /** Elemento (`<LuArrow />`) o componente (`LuArrow`). Desde Astro pasa el
+   *  componente: Astro no puede crear elementos React como props. */
+  icon?: React.ReactNode | React.ComponentType;
+  /** Icono tras el texto (flechas) en lugar de delante. */
+  iconPosition?: "start" | "end";
   className?: string;
-  asChild?: boolean;
-}
+  children?: React.ReactNode;
+};
+
+type AnchorProps = BaseProps &
+  Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseProps> & {
+    href: string;
+  };
+
+type NativeButtonProps = BaseProps &
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof BaseProps> & {
+    href?: undefined;
+  };
+
+export type ButtonProps = AnchorProps | NativeButtonProps;
+
+// La respuesta vive en el pointer-down (`active:`), no al soltar: escala
+// inmediata de 100ms, y el regreso hereda la curva de muelle.
+const BASE =
+  "group/button inline-flex select-none items-center justify-center gap-2.5 rounded-full font-medium leading-none tracking-[-0.005em] whitespace-nowrap " +
+  "transition-[transform,background-color,border-color,color,box-shadow] duration-500 ease-[var(--ease-spring)] " +
+  "active:scale-[0.97] active:duration-100 disabled:pointer-events-none disabled:opacity-50";
+
+const SIZES: Record<ButtonSize, string> = {
+  sm: "h-9 px-4 text-[0.8125rem]",
+  md: "h-11 px-5 text-[0.9375rem]",
+  lg: "h-13 px-7 text-base",
+};
+
+const VARIANTS: Record<ButtonVariant, string> = {
+  primary:
+    "bg-primary text-darkGray shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_8px_24px_-12px_rgb(51_58_48/0.6)] hover:bg-secondary",
+  light:
+    "bg-white/90 text-ink shadow-[inset_0_1px_0_rgb(255_255_255),0_8px_24px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md hover:bg-white",
+  glass:
+    "border border-white/25 bg-white/10 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] backdrop-blur-xl backdrop-saturate-150 hover:border-white/40 hover:bg-white/18",
+  simple:
+    "border border-ink/15 bg-transparent text-ink hover:border-ink/30 hover:bg-ink/[0.04]",
+};
 
 export const Button = React.forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
@@ -23,94 +66,54 @@ export const Button = React.forwardRef<
       variant = "primary",
       size = "md",
       icon,
-      isFalse = false,
-      isImage = false,
-      href,
+      iconPosition = "start",
       className = "",
       children,
       ...props
     },
-    forwardedRef,
+    ref,
   ) => {
-    // Determine base classes
-    const baseClasses =
-      "inline-flex items-center justify-center gap-2 transition-transform duration-300 font-semibold uppercase tracking-[0.2em]";
+    const classes = `${BASE} ${SIZES[size]} ${VARIANTS[variant]} ${className}`;
+    const iconNode = icon ? (
+      <span
+        aria-hidden="true"
+        className="inline-flex shrink-0 text-[1.1em] transition-transform duration-500 ease-[var(--ease-spring)] group-hover/button:translate-x-0.5"
+      >
+        {typeof icon === "function" ? React.createElement(icon) : icon}
+      </span>
+    ) : null;
 
-    // Determine sizes
-    let sizeClasses = "";
-    if (variant !== "glass") {
-      switch (size) {
-        case "sm":
-          sizeClasses = "px-3 py-1.5 text-[0.65rem]";
-          break;
-        case "lg":
-          sizeClasses = "px-8 py-4 text-sm";
-          break;
-        case "md":
-        default:
-          sizeClasses = "px-5 py-2.5 text-xs";
-          break;
-      }
-    } else {
-      sizeClasses = "h-10 w-10 md:h-12 md:w-12";
-    }
+    const content = (
+      <>
+        {iconPosition === "start" && iconNode}
+        {children}
+        {iconPosition === "end" && iconNode}
+      </>
+    );
 
-    // Determine variant classes
-    let variantClasses = "";
-    switch (variant) {
-      case "primary":
-        variantClasses =
-          "bg-ink text-canvas rounded-full hover:-translate-y-0.5";
-        break;
-      case "black&white":
-        variantClasses = "rounded-full hover:-translate-y-0.5";
-        if (isImage) {
-          variantClasses +=
-            " bg-white text-black transition-colors hover:bg-white/90";
-        } else {
-          variantClasses +=
-            " border border-ink bg-canvas text-ink hover:bg-ink hover:text-canvas";
-        }
-        break;
-      case "simple":
-        variantClasses =
-          "rounded-full border border-line hover:bg-panel bg-transparent text-ink transition-colors duration-300";
-        break;
-      case "glass":
-        variantClasses =
-          "rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/20";
-        break;
-    }
-
-    // Bounce animation if isFalse is true
-    const bounceClass = isFalse ? "animate-bounce" : "";
-
-    // Combine classes
-    const combinedClasses =
-      `${baseClasses} ${sizeClasses} ${variantClasses} ${bounceClass} ${className}`.trim();
-
-    if (href) {
+    if (props.href !== undefined) {
       return (
         <a
-          href={href}
-          className={combinedClasses}
-          ref={forwardedRef as React.Ref<HTMLAnchorElement>}
-          {...(props as any)}
+          ref={ref as React.Ref<HTMLAnchorElement>}
+          className={classes}
+          {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
         >
-          {icon && <span className="shrink-0 text-lg">{icon}</span>}
-          {children}
+          {content}
         </a>
       );
     }
 
+    const { type = "button", ...buttonProps } =
+      props as React.ButtonHTMLAttributes<HTMLButtonElement>;
+
     return (
       <button
-        className={combinedClasses}
-        ref={forwardedRef as React.Ref<HTMLButtonElement>}
-        {...(props as any)}
+        ref={ref as React.Ref<HTMLButtonElement>}
+        type={type}
+        className={classes}
+        {...buttonProps}
       >
-        {icon && <span className="shrink-0 text-lg">{icon}</span>}
-        {children}
+        {content}
       </button>
     );
   },

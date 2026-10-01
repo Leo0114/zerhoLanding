@@ -1,0 +1,102 @@
+---
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/ui/Icon.astro";
+import { SITE, mailHref, whatsappHref } from "@/data/site";
+
+/**
+ * Cierre de la ficha. No es un formulario: para una operación de ocho cifras,
+ * lo que el comprador quiere es hablar con alguien —con nombre y apellido— y
+ * conocer la casa en persona. El tono es de invitación, no de trámite.
+ */
+interface Props {
+  /** Residencia sobre la que se contacta; prellena mensaje y asunto. */
+  propertyTitle?: string;
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  class?: string;
+}
+
+const {
+  propertyTitle,
+  eyebrow = "Visítanos",
+  title,
+  description,
+  class: className = "",
+} = Astro.props;
+---
+
+<section
+  id="contacto"
+  class:list={[
+    // `overflow-x-clip`: el halo decorativo sobresale a propósito, pero en
+    // móvil no debe ensanchar la página (Safari amplía el viewport).
+    "section-anchor section-y overflow-x-clip bg-primary text-on-primary",
+    className,
+  ]}
+>
+  <div class="container-x relative isolate">
+    <div
+      class="pointer-events-none absolute -right-40 -top-48 -z-10 h-96 w-96 rounded-full bg-accent/20 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div
+      class="reveal flex flex-col items-start gap-12 lg:flex-row lg:items-end lg:justify-between"
+    >
+      <div class="max-w-2xl">
+        <p class="type-eyebrow flex items-center gap-3 text-accent-light">
+          <span class="h-px w-8 bg-accent-light/50" aria-hidden="true"></span>
+          {eyebrow}
+        </p>
+
+        <h2 class="type-title mt-5 text-on-primary">{title}</h2>
+
+        {
+          description && (
+            <p class="type-body mt-5 text-on-primary/70">{description}</p>
+          )
+        }
+
+        <p class="mt-8 text-[0.95rem] text-on-primary">
+          <span class="text-on-primary/60">Te atiende</span>
+          {SITE.contactPerson}
+        </p>
+
+        <div
+          class="mt-4 flex flex-col gap-3 text-[0.95rem] text-on-primary/70 sm:flex-row sm:flex-wrap sm:gap-x-8"
+        >
+          <a
+            href={`tel:${SITE.phoneHref}`}
+            class="inline-flex items-center gap-2.5 transition-colors duration-300 hover:text-on-primary"
+          >
+            <Icon name="phone" class="h-4 w-4 shrink-0 text-accent-light" />
+            {SITE.phone}
+          </a>
+          <a
+            href={mailHref(propertyTitle)}
+            class="inline-flex items-center gap-2.5 transition-colors duration-300 hover:text-on-primary"
+          >
+            <Icon name="mail" class="h-4 w-4 shrink-0 text-accent-light" />
+            {SITE.email}
+          </a>
+        </div>
+      </div>
+
+      <div class="flex shrink-0 flex-wrap items-center gap-3">
+        <Button
+          href={whatsappHref(propertyTitle)}
+          external
+          variant="on-primary"
+          icon="arrow-right"
+        >
+          Agendar visita
+        </Button>
+        <Button href={`tel:${SITE.phoneHref}`} variant="glass">
+          Hablemos
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

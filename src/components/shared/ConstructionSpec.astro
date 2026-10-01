@@ -1,0 +1,93 @@
+---
+import { lastItemSpan, type GridColumns } from "@/lib/grid";
+
+/**
+ * Especificación constructiva agrupada por familia.
+ *
+ * Dos lecturas: el resumen (`compact`) en la ficha y el desarrollo completo
+ * dentro de un modal, donde no hay animaciones de entrada que esperar.
+ */
+interface Item {
+  title: string;
+  body: string;
+}
+
+interface Props {
+  groups: readonly { group: string; items: readonly Item[] }[];
+  /**
+   * `compact`: una rejilla de familias con los nombres de sus partidas, sin
+   * el desarrollo. Es el resumen de la ficha; el completo va en un modal.
+   */
+  compact?: boolean;
+  class?: string;
+}
+
+const { groups, compact = false, class: className = "" } = Astro.props;
+
+// En escritorio, tantas columnas como familias (hasta cuatro): tres familias
+// ocupan el ancho completo en lugar de dejar un hueco esperando una cuarta.
+const LG_COLUMNS = { 1: "lg:grid-cols-1", 2: "lg:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" } as const;
+const lgColumns = Math.min(Math.max(groups.length, 1), 4) as keyof typeof LG_COLUMNS;
+const columns: GridColumns = { base: 1, sm: 2, lg: lgColumns };
+const lastSpan = lastItemSpan(groups.length, columns);
+---
+
+{
+  compact ? (
+    <div
+      class:list={[
+        "grid gap-px overflow-hidden rounded-panel border border-line bg-line sm:grid-cols-2",
+        LG_COLUMNS[lgColumns],
+        className,
+      ]}
+    >
+      {groups.map((group, groupIndex) => (
+        <section
+          class:list={[
+            "reveal bg-panel px-6 py-6",
+            groupIndex === groups.length - 1 && lastSpan,
+          ]}
+          style={`transition-delay:${Math.min(groupIndex * 40, 200)}ms`}
+        >
+          <span class="type-label tabular-nums text-accent-deep" aria-hidden="true">
+            {String(groupIndex + 1).padStart(2, "0")}
+          </span>
+          <h3 class="mt-2.5 text-[1rem] font-semibold leading-snug tracking-[-0.01em] text-ink">
+            {group.group}
+          </h3>
+          <ul class="mt-3 space-y-1.5">
+            {group.items.map((item) => (
+              <li class="text-[0.875rem] leading-snug text-muted">{item.title}</li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  ) : (
+    <div class:list={["space-y-10", className]}>
+      {groups.map((group, groupIndex) => (
+        <section class="grid gap-5 md:grid-cols-[12rem_1fr] md:gap-10">
+          <div>
+            <span class="type-label tabular-nums text-accent-deep" aria-hidden="true">
+              {String(groupIndex + 1).padStart(2, "0")}
+            </span>
+            <h3 class="type-heading mt-2.5 text-ink">{group.group}</h3>
+          </div>
+
+          <ul class="space-y-5">
+            {group.items.map((item) => (
+              <li>
+                <h4 class="text-[1rem] font-semibold leading-snug tracking-[-0.01em] text-ink">
+                  {item.title}
+                </h4>
+                <p class="mt-1.5 text-[0.925rem] leading-relaxed text-muted">
+                  {item.body}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  )
+}

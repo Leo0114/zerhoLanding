@@ -1,0 +1,87 @@
+---
+/**
+ * Rejilla numerada para argumentos de venta (los cinco compromisos de Zerho).
+ * La numeración no es decorativa: convierte una lista de promesas en un orden
+ * que se puede citar y recordar.
+ */
+interface Pillar {
+  title: string;
+  body: string;
+}
+
+interface Props {
+  items: readonly Pillar[];
+  variant?: "card" | "bare";
+  tone?: "light" | "dark";
+  columns?: 2 | 3 | 4 | 5;
+  /** Sólo número y título; el desarrollo se lee bajo demanda. */
+  compact?: boolean;
+  class?: string;
+}
+
+const {
+  items,
+  variant = "card",
+  tone = "light",
+  columns = 3,
+  compact = false,
+  class: className = "",
+} = Astro.props;
+
+const isDark = tone === "dark";
+
+const COLUMN_CLASS = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-2 lg:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+  5: "sm:grid-cols-2 lg:grid-cols-5",
+} as const;
+---
+
+<ul class:list={["grid gap-5", COLUMN_CLASS[columns], className]}>
+  {
+    items.map((item, i) => (
+      <li
+        class:list={[
+          "reveal h-full",
+          variant === "card"
+            ? isDark
+              ? "card-on-primary p-6 lg:p-7"
+              : "card p-6 shadow-e1 lg:p-7"
+            : isDark
+              ? "border-t border-white/15 pt-6"
+              : "border-t border-line pt-6",
+        ]}
+        style={`transition-delay:${Math.min(i * 40, 240)}ms`}
+      >
+        <span
+          class:list={[
+            "type-label tabular-nums",
+            isDark ? "text-accent-light" : "text-accent-deep",
+          ]}
+          aria-hidden="true"
+        >
+          {String(i + 1).padStart(2, "0")}
+        </span>
+        <h3
+          class:list={[
+            "type-heading mt-3.5",
+            isDark ? "text-on-primary" : "text-ink",
+          ]}
+        >
+          {item.title}
+        </h3>
+        {!compact && (
+          <p
+            class:list={[
+              "mt-3 text-[0.95rem] leading-relaxed",
+              isDark ? "text-on-primary/65" : "text-muted",
+            ]}
+          >
+            {item.body}
+          </p>
+        )}
+      </li>
+    ))
+  }
+</ul>

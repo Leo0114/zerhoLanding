@@ -1,0 +1,76 @@
+---
+import { Image } from "astro:assets";
+
+/**
+ * Bloque de texto e imagen a dos columnas. Alternar `imageSide` a lo largo de
+ * la página evita que la lectura caiga siempre por el mismo lado.
+ */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  /** Un párrafo por entrada. */
+  body?: readonly string[];
+  image: ImageMetadata;
+  imageAlt?: string;
+  imageSide?: "left" | "right";
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  body = [],
+  image,
+  imageAlt = "",
+  imageSide = "right",
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class:list={["grid items-center gap-10 lg:grid-cols-2 lg:gap-16", className]}
+>
+  <div class:list={["reveal", imageSide === "left" && "lg:order-2"]}>
+    {
+      eyebrow && (
+        <p class="type-eyebrow flex items-center gap-3 text-accent-deep">
+          <span class="h-px w-8 bg-accent/45" aria-hidden="true" />
+          {eyebrow}
+        </p>
+      )
+    }
+
+    <h2 class="type-title mt-5 text-ink">{title}</h2>
+
+    {body.map((paragraph) => <p class="type-body mt-5 text-muted">{paragraph}</p>)}
+
+    <slot />
+  </div>
+
+  <div
+    class:list={["reveal relative", imageSide === "left" && "lg:order-1"]}
+    style="transition-delay:120ms"
+  >
+    <div class="overflow-hidden rounded-frame bg-panel-alt shadow-e2">
+      <Image
+        src={image}
+        alt={imageAlt}
+        widths={[480, 800, 1200]}
+        sizes="(min-width: 1024px) 46vw, 92vw"
+        loading="lazy"
+        class="aspect-[4/3] h-full w-full object-cover"
+      />
+    </div>
+
+    {/* Una sombra teñida bajo el marco: la imagen se apoya en la página en
+        lugar de flotar recortada sobre ella. */}
+    <div
+      class:list={[
+        "pointer-events-none absolute -bottom-5 -z-10 h-28 w-2/3 rounded-frame bg-accent/15 blur-3xl",
+        imageSide === "left" ? "-left-5" : "-right-5",
+      ]}
+      aria-hidden="true"
+    >
+    </div>
+  </div>
+</div>

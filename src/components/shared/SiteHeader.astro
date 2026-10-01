@@ -1,0 +1,441 @@
+---
+import { Image } from "astro:assets";
+import { SITE } from "@/data/site";
+import { getProperties, propertyHref } from "@/lib/properties";
+import Icon from "@/components/ui/Icon.astro";
+import SectionNav from "./SectionNav.astro";
+import firstLogo from "@/assets/firstLogo.png";
+import scrollLogo from "@/assets/scrollLogo.png";
+
+interface Props {
+  /** Slug de la residencia que se está viendo, para marcarla en el menú. */
+  currentId?: string;
+  /** Se apaga en páginas sin secciones (el 404): no se enlaza a anclas vacías. */
+  showSections?: boolean;
+}
+
+const { currentId, showSections = true } = Astro.props;
+const properties = await getProperties();
+
+// Los PNG de marca son cuadrados con mucho aire; la caja apaisada (3:1) y
+// `object-cover` recortan ese aire sin tocar el archivo original.
+const LOGO_IMAGE = {
+  // `width` fija también el `src` de respaldo: sin él se serviría el PNG de 8K.
+  width: 480,
+  height: 480,
+  widths: [240, 480],
+  sizes: "(min-width: 1024px) 160px, 140px",
+  loading: "eager",
+  class: "h-full w-full object-cover",
+} as const;
+---
+
+<header
+  id="site-header"
+  data-chrome="hero"
+  class="chrome scroll-edge fixed inset-x-0 top-0 z-50 h-[var(--chrome-h)]"
+>
+  <div
+    class="chrome-bg material-chrome absolute inset-0 -z-10 border-b border-line/60"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-x flex h-full items-center gap-6">
+    <!-- Marca -->
+    <a
+      href="/"
+      class="brand relative block shrink-0"
+      aria-label={`${SITE.name} — ${SITE.slogan}`}
+    >
+      <span class="brand-logo brand-logo--hero" aria-hidden="true">
+        <Image src={firstLogo} alt="" {...LOGO_IMAGE} />
+      </span>
+      <span class="brand-logo brand-logo--solid" aria-hidden="true">
+        <Image src={scrollLogo} alt="" {...LOGO_IMAGE} />
+      </span>
+    </a>
+
+    <!-- Índice de la residencia (escritorio) -->
+    {
+      showSections && (
+        <SectionNav class="section-index mx-auto hidden lg:flex" />
+      )
+    }
+
+    <!-- Las otras residencias -->
+    <details data-residences class="relative ml-auto shrink-0 lg:ml-0">
+      <summary
+        aria-label="Residencias"
+        class="press-soft flex h-10 min-w-10 cursor-pointer list-none items-center justify-center gap-2 rounded-full border border-current/20 px-2.5 text-[0.7rem] font-semibold uppercase leading-none tracking-[0.14em] transition-colors duration-300 hover:border-current/45 sm:px-3.5 [&::-webkit-details-marker]:hidden"
+      >
+        <span class="hidden sm:inline">Residencias</span>
+        <Icon
+          name="chevron-down"
+          class="h-3.5 w-3.5 transition-transform duration-300 ease-[var(--ease-out-expo)]"
+          strokeWidth={2}
+        />
+      </summary>
+
+      <!-- El panel nace de su disparador: escala desde la esquina superior
+           derecha, que es justo donde el usuario acaba de pulsar. -->
+      <div
+        class="residences-panel absolute right-0 top-[calc(100%+0.75rem)] w-[min(20rem,calc(100vw-2.5rem))] origin-top-right overflow-hidden rounded-[1.25rem] border border-line bg-panel text-ink shadow-e3"
+      >
+        <p class="type-eyebrow px-5 pb-1 pt-4 text-muted">
+          Otras oportunidades
+        </p>
+        <ul class="p-1.5">
+          {
+            properties.map((property) => {
+              const isCurrent = property.id === currentId;
+              return (
+                <li>
+                  <a
+                    href={propertyHref(property)}
+                    aria-current={isCurrent ? "page" : undefined}
+                    class="press-soft flex items-baseline justify-between gap-3 rounded-[0.85rem] px-3.5 py-3 transition-colors duration-200 hover:bg-canvas aria-[current=page]:bg-canvas"
+                  >
+                    <span class="flex flex-col gap-1">
+                      <span class="text-[0.95rem] font-semibold leading-none">
+                        {property.data.title}
+                      </span>
+                      <span class="text-[0.7rem] leading-none text-muted">
+                        {property.data.location.split(",")[0]}
+                      </span>
+                    </span>
+                    {isCurrent ? (
+                      <span class="type-eyebrow shrink-0 text-accent-deep">
+                        Viendo
+                      </span>
+                    ) : (
+                      <Icon
+                        name="arrow-up-right"
+                        class="h-4 w-4 shrink-0 text-muted"
+                      />
+                    )}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+    </details>
+  </div>
+</header>
+
+<style>
+  /* --- Estados del cristal ------------------------------------------------- */
+  .chrome {
+    color: var(--color-ink);
+    transition: color 400ms var(--ease-out-expo);
+  }
+
+  .chrome-bg {
+    opacity: 1;
+    transition: opacity 400ms var(--ease-out-expo);
+  }
+
+  .chrome[data-chrome="hero"] {
+    color: #fff;
+  }
+
+  .chrome[data-chrome="hero"] .chrome-bg {
+    opacity: 0;
+  }
+
+  /* --- Marca -------------------------------------------------------------
+     La cabecera es contenedor de consulta: `100cqw` es su ancho real (sin la
+     barra de scroll), así el centrado se resuelve en CSS, sin medir en JS
+     ni parpadear en el primer pintado. Las variables replican el ritmo de
+     `.container-x`.
+
+     · Móvil: la marca vive siempre al centro; sólo cambia de tamaño y tinta.
+     · Escritorio: centrada sobre el hero, a la izquierda al hacer scroll,
+       para dejar el centro al índice de secciones.                        */
+  .chrome {
+    container-type: inline-size;
+    --pad: 1.25rem;
+    --brand-w: 7.5rem;
+    --brand-hero-scale: 1.2;
+    /* Desplazamiento desde su sitio en el flujo hasta el centro exacto. */
+    --brand-center: calc(
+      min(100cqw, 84rem) / 2 - var(--pad) - var(--brand-w) / 2
+    );
+    --brand-x: var(--brand-center);
+    --brand-scale: 1;
+  }
+
+  .chrome[data-chrome="hero"] {
+    --brand-x: var(--brand-center);
+    --brand-scale: var(--brand-hero-scale);
+  }
+
+  @media (min-width: 640px) {
+    .chrome {
+      --pad: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .chrome {
+      --brand-w: 9rem;
+      --brand-hero-scale: 1.3;
+      --brand-x: 0px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .chrome {
+      --pad: 3rem;
+    }
+  }
+
+  .brand {
+    width: var(--brand-w);
+    aspect-ratio: 3 / 1;
+    transform-origin: center;
+    transform: translate3d(var(--brand-x), 0, 0) scale(var(--brand-scale));
+    transition: transform 700ms var(--ease-out-quint);
+  }
+
+  .brand:active {
+    opacity: 0.8;
+  }
+
+  .brand-logo {
+    position: absolute;
+    inset: 0;
+    transition: opacity 500ms var(--ease-out-quint);
+  }
+
+  .brand-logo--hero,
+  .chrome[data-chrome="hero"] .brand-logo--solid {
+    opacity: 0;
+  }
+
+  .chrome[data-chrome="hero"] .brand-logo--hero {
+    opacity: 1;
+  }
+
+  /* Liquid-glass pill behind the hero logo */
+  .brand-logo--hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    padding: 0.55rem 1.1rem;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.18) inset,
+      0 4px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  /* --- Índice: se retira mientras el logotipo preside el hero ------------- */
+  .chrome :global(.section-index) {
+    transition:
+      opacity 500ms var(--ease-out-quint),
+      visibility 0s;
+  }
+
+  .chrome[data-chrome="hero"] :global(.section-index) {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 300ms var(--ease-out-quint),
+      visibility 0s linear 300ms;
+  }
+
+  /* --- Panel de residencias -------------------------------------------------
+     Se materializa: escala y desenfoque a la vez, anclados al disparador. */
+  .residences-panel {
+    opacity: 0;
+    transform: scale(0.94) translateY(-6px);
+    filter: blur(6px);
+    pointer-events: none;
+    transition:
+      opacity 260ms var(--ease-out-expo),
+      transform 260ms var(--ease-out-expo),
+      filter 260ms var(--ease-out-expo);
+  }
+
+  details[open] .residences-panel {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    pointer-events: auto;
+  }
+
+  details[open] summary :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .residences-panel {
+      transform: none;
+      filter: none;
+      transition: opacity 160ms linear;
+    }
+  }
+</style>
+
+<script>
+  import { mountAllIndicators } from "@/scripts/indicator";
+
+  const OFFSET_EXTRA = 24; // margen sobre el chrome antes de dar por activa una sección
+
+  let teardown: Array<() => void> = [];
+
+  function initChrome() {
+    teardown.forEach((fn) => fn());
+    teardown = [];
+
+    const header = document.getElementById("site-header");
+    if (!header) return;
+
+    /* --- Cristal transparente sobre el hero, esmerilado sobre el lienzo --- */
+    const sentinel = document.querySelector("[data-chrome-sentinel]");
+
+    if (sentinel) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          header.dataset.chrome = entry.isIntersecting ? "hero" : "solid";
+        },
+        { threshold: 0 },
+      );
+      observer.observe(sentinel);
+      teardown.push(() => observer.disconnect());
+    } else {
+      header.dataset.chrome = "solid";
+    }
+
+    /* --- Borde de scroll: sólo cuando hay contenido pasando por debajo --- */
+    let scrollFrame = 0;
+    const onScroll = () => {
+      if (scrollFrame) return;
+      scrollFrame = requestAnimationFrame(() => {
+        header.toggleAttribute("data-scrolled", window.scrollY > 8);
+        scrollFrame = 0;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    teardown.push(() => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(scrollFrame);
+    });
+
+    /* --- Scroll-spy ------------------------------------------------------
+       Se calcula a mano en lugar de con IntersectionObserver porque la
+       pregunta no es "¿se ve?" sino "¿cuál estoy leyendo?": gana la última
+       sección cuyo inicio ya quedó por encima del chrome. Además resuelve
+       bien el final de la página, donde la última sección nunca llega a
+       ocupar la mayor parte de la pantalla.                                */
+    const navs = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-section-nav]"),
+    );
+    const links = navs.flatMap((nav) =>
+      Array.from(
+        nav.querySelectorAll<HTMLAnchorElement>("[data-section-link]"),
+      ),
+    );
+    const sections = [
+      ...new Set(links.map((link) => link.dataset.sectionLink!)),
+    ]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (sections.length) {
+      let spyFrame = 0;
+
+      const setActive = (id: string) => {
+        for (const link of links) {
+          const active = link.dataset.sectionLink === id;
+          link.toggleAttribute("data-active", active);
+          if (active) link.setAttribute("aria-current", "true");
+          else link.removeAttribute("aria-current");
+        }
+      };
+
+      const measure = () => {
+        const chrome =
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              "--chrome-h",
+            ),
+          ) * 16 || 72;
+        const line = chrome + OFFSET_EXTRA;
+
+        // Al tocar fondo gana siempre la última: si no, una sección corta al
+        // final del documento nunca podría marcarse.
+        const atBottom =
+          window.innerHeight + window.scrollY >=
+          document.documentElement.scrollHeight - 2;
+
+        if (atBottom) {
+          setActive(sections[sections.length - 1]!.id);
+          return;
+        }
+
+        let current = sections[0]!.id;
+        for (const section of sections) {
+          if (section.getBoundingClientRect().top <= line) current = section.id;
+        }
+        setActive(current);
+      };
+
+      const onSpy = () => {
+        if (spyFrame) return;
+        spyFrame = requestAnimationFrame(() => {
+          measure();
+          spyFrame = 0;
+        });
+      };
+
+      window.addEventListener("scroll", onSpy, { passive: true });
+      window.addEventListener("resize", onSpy);
+      measure();
+
+      teardown.push(() => {
+        window.removeEventListener("scroll", onSpy);
+        window.removeEventListener("resize", onSpy);
+        cancelAnimationFrame(spyFrame);
+      });
+    }
+
+    teardown.push(mountAllIndicators());
+
+    /* --- El menú de residencias se cierra al salir de él --- */
+    const details =
+      document.querySelector<HTMLDetailsElement>("[data-residences]");
+
+    if (details) {
+      const onPointerDown = (event: PointerEvent) => {
+        if (!details.open) return;
+        if (!details.contains(event.target as Node)) details.open = false;
+      };
+      const onKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Escape" && details.open) {
+          details.open = false;
+          details.querySelector("summary")?.focus();
+        }
+      };
+
+      document.addEventListener("pointerdown", onPointerDown);
+      document.addEventListener("keydown", onKeyDown);
+      teardown.push(() => {
+        document.removeEventListener("pointerdown", onPointerDown);
+        document.removeEventListener("keydown", onKeyDown);
+      });
+    }
+  }
+
+  document.addEventListener("astro:page-load", initChrome);
+  document.addEventListener("astro:before-swap", () => {
+    teardown.forEach((fn) => fn());
+    teardown = [];
+  });
+</script>

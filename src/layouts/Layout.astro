@@ -2,29 +2,94 @@
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import { SEO } from "astro-seo";
+import { homeData } from "@/api/home";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import ScrollReveal from "@/components/shared/ScrollReveal.astro";
+import SmoothScroll from "@/components/shared/SmoothScroll.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { seo } = homeData;
+const { title = seo.title, description = seo.metaDescription } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <ClientRouter />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#333a30" />
     <meta name="generator" content={Astro.generator} />
-    <title>Zerho LandingPage</title>
+    <link rel="icon" type="image/png" href="/ico.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap"
+    />
+
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonical.href}
+      openGraph={{
+        basic: {
+          title,
+          type: "website",
+          image: new URL("/ico.png", Astro.site).href,
+        },
+        optional: { description, locale: "es_MX", siteName: "Zerho Arquitectura" },
+      }}
+      extend={{ meta: [{ name: "keywords", content: seo.keywords.join(", ") }] }}
+    />
+
+    <!-- Antes del primer pintado: los `.reveal` se ocultan sin parpadeo. El
+         ClientRouter reemplaza los atributos de <html> al navegar, así que
+         la clase se vuelve a poner tras cada intercambio. -->
+    <script is:inline>
+      document.documentElement.classList.add("js");
+      document.addEventListener("astro:after-swap", () =>
+        document.documentElement.classList.add("js"),
+      );
+    </script>
+
+    <ClientRouter fallback="swap" />
   </head>
-  <body>
-    <slot />
+  <body class="min-h-svh">
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+    <Navbar />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <SmoothScroll />
+    <ScrollReveal />
   </body>
 </html>
 
 <style>
-  html,
-  body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-darkGray);
+    background: var(--color-primary);
+    transform: translateY(-200%);
+    transition: transform 400ms var(--ease-spring);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
   }
 </style>

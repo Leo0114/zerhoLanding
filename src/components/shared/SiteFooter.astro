@@ -1,0 +1,140 @@
+---
+import { Image } from "astro:assets";
+import { SITE, SECTIONS, mailHref, whatsappHref } from "@/data/site";
+import Icon from "@/components/ui/Icon.astro";
+import firstLogo from "@/assets/firstLogo.png";
+
+interface Props {
+  propertyTitle?: string;
+  currentId?: string;
+}
+
+const { propertyTitle, currentId } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-primary-deep text-on-primary">
+  <div class="container-x py-16 lg:py-20">
+    <div class="grid gap-12 lg:grid-cols-3 lg:gap-16">
+      
+      <!-- Izquierda: Identidad y Contacto -->
+      <div class="flex flex-col items-start">
+        <p class="type-subheading font-[family-name:var(--font-display)] text-on-primary/85">
+          {SITE.signature}
+        </p>
+
+        <p class="mt-4 max-w-sm text-[0.95rem] leading-relaxed text-on-primary/60">
+          {SITE.description}
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-2.5">
+          <a
+            href={whatsappHref(propertyTitle)}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-glass btn-sm"
+          >
+            <Icon name="whatsapp" class="h-4 w-4" />
+            WhatsApp
+          </a>
+          <a href={mailHref(propertyTitle)} class="btn btn-glass btn-sm">
+            <Icon name="mail" class="h-4 w-4" strokeWidth={1.8} />
+            Correo
+          </a>
+        </div>
+
+        <div class="mt-10 flex flex-wrap items-center gap-5 text-on-primary/60">
+          <a href="#" class="hover:text-on-primary transition-colors" aria-label="Instagram">
+            <Icon name="instagram" class="h-5 w-5" />
+          </a>
+          <a href="#" class="hover:text-on-primary transition-colors" aria-label="LinkedIn">
+            <Icon name="linkedin" class="h-5 w-5" />
+          </a>
+          <a href="#" class="hover:text-on-primary transition-colors" aria-label="Facebook">
+            <Icon name="facebook" class="h-5 w-5" />
+          </a>
+          <div class="w-px h-5 bg-white/20"></div>
+          <a href="#" class="hover:text-on-primary transition-colors text-[0.9rem]">
+            Zerho.mx
+          </a>
+        </div>
+      </div>
+
+      <!-- Centro: Logo -->
+      <div class="flex flex-col items-center justify-start lg:justify-center">
+        <a href="/" class="block w-44 sm:w-52" aria-label={`${SITE.name} — ${SITE.slogan}`}>
+          <Image
+            src={firstLogo}
+            alt=""
+            width={480}
+            height={480}
+            widths={[240, 480]}
+            sizes="208px"
+            class="aspect-[3/1] h-auto w-full object-cover"
+          />
+        </a>
+      </div>
+
+      <!-- Derecha: Navegación -->
+      <div class="flex flex-col lg:items-end lg:text-right">
+        <h2 class="type-eyebrow text-on-primary-muted">En esta ficha</h2>
+        <ul class="mt-5 grid grid-cols-2 gap-x-4 gap-y-3">
+          {
+            SECTIONS.map((section) => (
+              <li>
+                <a
+                  href={`#${section.id}`}
+                  class="text-[0.85rem] text-on-primary/60 transition-colors duration-300 hover:text-on-primary"
+                >
+                  {section.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h2 class="type-eyebrow mt-10 text-on-primary-muted">Conversemos</h2>
+        <ul class="mt-5 space-y-2.5 text-[0.95rem] text-on-primary/70">
+          <li class="text-on-primary">{SITE.contactPerson}</li>
+          <li>
+            <a
+              href={`tel:${SITE.phoneHref}`}
+              class="inline-flex items-center gap-2.5 transition-colors duration-300 hover:text-on-primary"
+            >
+              <Icon name="phone" class="h-4 w-4 shrink-0 text-accent-light" />
+              {SITE.phone}
+            </a>
+          </li>
+          <li>
+            <a
+              href={mailHref(propertyTitle)}
+              class="inline-flex items-center gap-2.5 transition-colors duration-300 hover:text-on-primary"
+            >
+              <Icon name="mail" class="h-4 w-4 shrink-0 text-accent-light" />
+              {SITE.email}
+            </a>
+          </li>
+          <li class="flex lg:justify-end items-start gap-2.5">
+            <Icon
+              name="map-pin"
+              class="mt-0.5 h-4 w-4 shrink-0 text-accent-light"
+            />
+            {SITE.city}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between w-full"
+    >
+      <p class="text-[0.75rem] text-on-primary/45">
+        © {year} {SITE.legalName}. Todos los derechos reservados.
+      </p>
+      <p class="text-[0.75rem] text-on-primary/45">
+        Precios e imágenes de carácter informativo; no constituyen oferta
+        vinculante.
+      </p>
+    </div>
+  </div>
+</footer>

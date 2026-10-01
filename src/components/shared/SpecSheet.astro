@@ -1,0 +1,81 @@
+---
+import Icon from "@/components/ui/Icon.astro";
+import { isIconName } from "@/components/ui/icons";
+import { lastItemSpan } from "@/lib/grid";
+
+/**
+ * Ficha técnica. Es la tabla que el comprador compara entre residencias, así
+ * que prima la lectura en columna: etiqueta pequeña arriba, cifra grande
+ * debajo, matiz opcional al pie. Nada de iconos decorativos compitiendo con
+ * los números — el icono es un ancla de reconocimiento, va en gris y pequeño.
+ */
+interface Spec {
+  label: string;
+  value: string;
+  note?: string;
+  icon?: string;
+}
+
+interface Props {
+  items: readonly Spec[];
+  columns?: 2 | 3;
+  /** Sólo etiqueta y cifra: los matices quedan para la ficha completa. */
+  compact?: boolean;
+  class?: string;
+}
+
+const {
+  items,
+  columns = 3,
+  compact = false,
+  class: className = "",
+} = Astro.props;
+
+const COLUMN_CLASS = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-2 lg:grid-cols-3",
+} as const;
+
+// La última cifra cierra su fila: en una rejilla con filete, una celda vacía
+// se ve como un bloque de color huérfano.
+const lastSpan = lastItemSpan(items.length, {
+  base: compact ? 2 : 1,
+  sm: 2,
+  lg: columns === 3 ? 3 : 2,
+});
+---
+
+<dl
+  class:list={[
+    "grid gap-px overflow-hidden rounded-panel border border-line bg-line",
+    compact ? "grid-cols-2" : "",
+    COLUMN_CLASS[columns],
+    className,
+  ]}
+>
+  {
+    items.map((item, i) => (
+      <div
+        class:list={[
+          "flex flex-col bg-panel",
+          compact ? "reveal px-5 py-5" : "px-6 py-6",
+          i === items.length - 1 && lastSpan,
+        ]}
+        style={compact ? `transition-delay:${Math.min(i * 40, 240)}ms` : undefined}
+      >
+        <dt class="flex items-center gap-2.5">
+          {isIconName(item.icon) && (
+            <Icon name={item.icon} class="h-4 w-4 shrink-0 text-accent" />
+          )}
+          <span class="type-eyebrow text-muted">{item.label}</span>
+        </dt>
+        <dd class="type-stat mt-3 text-ink">{item.value}</dd>
+        {!compact && item.note && (
+          <p class="mt-2.5 text-[0.85rem] leading-snug text-muted">
+            {item.note}
+          </p>
+        )}
+      </div>
+    ))
+  }
+</dl>
