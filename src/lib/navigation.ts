@@ -10,7 +10,7 @@ export const HOME_SECTIONS: readonly NavItem[] = [
   { label: "Servicios", id: "servicios" },
   { label: "Garantía", id: "garantia" },
   { label: "Trayectoria", id: "trayectoria" },
-  { label: "Equipo", id: "equipo" },
+  { label: "Conócenos", id: "equipo" },
 ];
 
 export const CONTACT_PATH = "/contact";

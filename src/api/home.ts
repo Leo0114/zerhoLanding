@@ -153,18 +153,15 @@ export const homeData: HomeData = {
       "Tu patrimonio exige resultados impecables. Operamos bajo procesos que te brindan absoluta certidumbre de costos y tiempos de entrega. Maximizamos la plusvalía de tu terreno y aseguramos que cada peso invertido se refleje en calidad superior, estatus y seguridad para los tuyos.",
     years: 5,
     benefits: [
-      "Control Total. Cero Sorpresas.",
-      "Garantía y Respaldo de 5 Años: Largo plazo para proteger tu patrimonio y asegurar plusvalía.",
-      "Nuestro compromiso no termina al entregar las llaves.",
+      "Compromiso continuo: Nuestro compromiso no termina al entregarte las llaves. Seguiremos a tu lado con un servicio de mantenimiento dedicado, asegurándonos de que tu hogar se mantenga siempre impecable y disfrutes de total tranquilidad.",
     ],
   },
   contact: {
-    sectionTitle: "Hablemos de tu próximo hogar extraordinario",
+    sectionTitle: "Atención personalizada enfocada en superar tus expectativas",
     closingMessage:
-      "Creemos en la lealtad, no en la competencia. Trato directo y ejecutivo: sin intermediarios ni desinformación, comunicación clara y resolutiva con la gerencia para tomar decisiones ágiles que respetan tu agenda.",
-    phone: "+52 (81) 1965 8330",
-    website: "zerho.mx",
+      "Trato directo y ejecutivo: sin intermediarios ni desinformación, comunicación clara y resolutiva para tomar decisiones ágiles que respetan tu agenda.",
+    phone: "+52 (81) 2025 3696",
     email: "atrevino@zerho.mx",
-    contactPerson: "Arq. Ana Treviño Gaona",
+    contactPerson: "Arquitecta Ana | Gerente Comercial",
   },
 };

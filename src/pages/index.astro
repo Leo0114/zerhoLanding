@@ -5,6 +5,8 @@ import Philosophy from "@/components/home/Philosophy.astro";
 import Promises from "@/components/home/Promises.astro";
 import Services from "@/components/home/Services.astro";
 import Warranty from "@/components/home/Warranty.astro";
+import Trayectoria from "@/components/home/Trayectoria.astro";
+import Team from "@/components/home/Team.astro";
 import ContactCta from "@/components/home/ContactCta.astro";
 import { homeData } from "@/api/home";
 import { CONTACT_PATH } from "@/lib/navigation";
@@ -24,5 +26,7 @@ const { hero, commercialPhrases, services, warrantyAndValue, contact } =
   <Promises phrases={commercialPhrases} />
   <Services services={services} />
   <Warranty warranty={warrantyAndValue} />
+  <Trayectoria />
+  <Team />
   <ContactCta contact={contact} />
 </Layout>

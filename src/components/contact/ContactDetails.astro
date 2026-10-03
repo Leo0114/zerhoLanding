@@ -1,7 +1,7 @@
 ---
-import { LuGlobe, LuMail, LuPhone, LuUserRound } from "react-icons/lu";
+import { LuFacebook, LuInstagram, LuLinkedin, LuMail, LuPhone, LuUserRound } from "react-icons/lu";
 import type { ContactInfo } from "@/api/home";
-import { mailHref, phoneHref, websiteHref } from "@/lib/format";
+import { mailHref, phoneHref } from "@/lib/format";
 
 /** Canales directos: cada fila es un enlace que hace lo que dice. */
 interface Props {
@@ -11,7 +11,12 @@ interface Props {
 const { contact } = Astro.props;
 
 const rows = [
-  { label: "Teléfono", value: contact.phone, href: phoneHref(contact.phone), Icon: LuPhone },
+  {
+    label: "Teléfono",
+    value: contact.phone,
+    href: phoneHref(contact.phone),
+    Icon: LuPhone,
+  },
   {
     label: "Correo",
     value: contact.email,
@@ -19,10 +24,24 @@ const rows = [
     Icon: LuMail,
   },
   {
-    label: "Sitio web",
-    value: contact.website,
-    href: websiteHref(contact.website),
-    Icon: LuGlobe,
+    label: "Instagram",
+    value: "@zerho.arquitectura",
+    href: "#",
+    Icon: LuInstagram,
+    external: true,
+  },
+  {
+    label: "Facebook",
+    value: "Zerho Arquitectura",
+    href: "#",
+    Icon: LuFacebook,
+    external: true,
+  },
+  {
+    label: "LinkedIn",
+    value: "Zerho Arquitectura",
+    href: "#",
+    Icon: LuLinkedin,
     external: true,
   },
 ];
@@ -36,7 +55,7 @@ const rows = [
       <p class="mt-1 font-display text-2xl font-medium leading-tight text-ink">
         {contact.contactPerson}
       </p>
-      <p class="mt-1 text-sm text-muted">Trato directo con la gerencia.</p>
+      <p class="mt-1 text-sm text-muted">Trato directo</p>
     </div>
   </div>
 
@@ -47,7 +66,9 @@ const rows = [
           <a
             href={href}
             class="row"
-            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            {...(external
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
           >
             <span class="row-icon" aria-hidden="true">
               <Icon />
@@ -75,7 +96,8 @@ const rows = [
       inset 0 1px 0 var(--glass-light-highlight),
       var(--glass-shadow);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur))
+      saturate(var(--glass-saturate));
   }
 
   .person {

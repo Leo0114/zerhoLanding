@@ -1,11 +1,11 @@
 ---
 import { Image } from "astro:assets";
 import firstLogo from "@/assets/firstLogo.png";
+import { LuFacebook, LuInstagram, LuLinkedin } from "react-icons/lu";
 import { homeData } from "@/api/home";
-import { mailHref, phoneHref, websiteHref } from "@/lib/format";
 import { CONTACT_PATH, HOME_SECTIONS, sectionHref } from "@/lib/navigation";
 
-const { contact, hero } = homeData;
+const { hero } = homeData;
 const { pathname } = Astro.url;
 const year = new Date().getFullYear();
 ---
@@ -20,6 +20,24 @@ const year = new Date().getFullYear();
         <p class="mt-6 max-w-sm text-[0.9375rem] leading-relaxed text-darkGray/60">
           {hero.preTitle}. {hero.specialties.join(" · ")}.
         </p>
+
+        <ul class="mt-8 flex items-center gap-5 text-darkGray/60">
+          <li>
+            <a href="#" class="hover:text-darkGray transition-colors" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <LuInstagram className="h-5 w-5" />
+            </a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-darkGray transition-colors" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+              <LuFacebook className="h-5 w-5" />
+            </a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-darkGray transition-colors" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+              <LuLinkedin className="h-5 w-5" />
+            </a>
+          </li>
+        </ul>
       </div>
 
       <nav aria-label="Pie de página" class="lg:col-span-3">
@@ -38,19 +56,26 @@ const year = new Date().getFullYear();
         </ul>
       </nav>
 
-      <address class="not-italic lg:col-span-4">
-        <p class="footer-heading">Contacto</p>
-        <ul class="mt-5 grid gap-3">
-          <li class="text-[0.9375rem] text-darkGray">{contact.contactPerson}</li>
-          <li><a href={phoneHref(contact.phone)} class="footer-link">{contact.phone}</a></li>
-          <li><a href={mailHref(contact.email)} class="footer-link">{contact.email}</a></li>
-          <li>
-            <a href={websiteHref(contact.website)} class="footer-link" target="_blank" rel="noopener noreferrer">
-              {contact.website}
-            </a>
-          </li>
-        </ul>
-      </address>
+      <div class="lg:col-span-4">
+        <p class="footer-heading">Déjanos tus datos</p>
+        <p class="mt-4 max-w-xs text-[0.9375rem] text-darkGray/60 text-pretty">
+          Ingresa tu correo y nos pondremos en contacto contigo a la brevedad para hablar de tu proyecto.
+        </p>
+        <form class="mt-5 flex flex-col gap-3 relative" action={CONTACT_PATH} method="GET">
+          <input 
+            type="email" 
+            placeholder="Tu correo electrónico" 
+            class="w-full rounded-full border border-darkGray/20 bg-darkGray/5 px-5 py-3 text-sm text-darkGray placeholder-darkGray/40 outline-none transition-colors focus:border-darkGray/60 focus:bg-darkGray/10" 
+            required 
+          />
+          <button 
+            type="submit" 
+            class="w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-black shadow-md transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Contactar
+          </button>
+        </form>
+      </div>
     </div>
 
     <div class="mt-16 flex flex-col gap-3 border-t border-darkGray/12 pt-8 text-xs text-darkGray/45 sm:flex-row sm:justify-between">

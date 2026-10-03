@@ -1,0 +1,20 @@
+---
+import Container from "@/components/ui/Container.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+import TrayectoriaSliderComponent from "./TrayectoriaSlider";
+---
+
+<section id="trayectoria" class="py-28 sm:py-36 lg:py-44 relative overflow-hidden bg-warmGray/5">
+  <div class="absolute inset-0 bg-gradient-to-t from-transparent to-ink/[0.02] pointer-events-none" aria-hidden="true"></div>
+  <Container>
+    <SectionHeading
+      eyebrow="Nuestra Trayectoria"
+      title="Un legado construido"
+      align="center"
+      description="A lo largo de los años, hemos transformado visiones en realidades impactantes. Nuestro portafolio es un testimonio vivo de la dedicación, la precisión técnica y la excelencia que aplicamos en cada obra, superando siempre las expectativas iniciales."
+      class="mb-10 sm:mb-16"
+    />
+
+    <TrayectoriaSliderComponent client:visible />
+  </Container>
+</section>
