@@ -4,7 +4,14 @@ import Container from "@/components/ui/Container.astro";
 import SectionHeading from "@/components/ui/SectionHeading.astro";
 import type { ServiceDetail } from "@/api/home";
 import { splitIndexedTitle, splitLabel } from "@/lib/format";
-import { IMAGE_ALT, images } from "@/lib/images";
+import { IMAGE_ALT } from "@/lib/images";
+
+import img1 from "@/assets/images/encinos11.png";
+import img2 from "@/assets/images/balcones.png";
+import img3 from "@/assets/images/inter.png";
+import img4 from "@/assets/images/FPENC8_01.jpg";
+
+const serviceImages = [img1, img2, img3, img4];
 
 interface Props {
   services: readonly ServiceDetail[];
@@ -16,8 +23,8 @@ const { services } = Astro.props;
 <section id="servicios" class="py-28 sm:py-36 lg:py-44">
   <Container>
     <SectionHeading
-      eyebrow="Servicios"
-      title="Dos caminos hacia tu residencia"
+      eyebrow="Nuestra razón de ser"
+      title="Los caminos hacia tu residencia"
     />
 
     <div class="mt-20 flex flex-col gap-24 sm:mt-24 lg:gap-36">
@@ -25,7 +32,7 @@ const { services } = Astro.props;
         services.map((service, i) => {
           const { index, label } = splitIndexedTitle(service.title);
           const reversed = i % 2 === 1;
-          const image = images.services[i] ?? images.services[0];
+          const image = serviceImages[i] ?? serviceImages[0];
 
           return (
             <article class="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">

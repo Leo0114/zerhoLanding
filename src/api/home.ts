@@ -65,7 +65,11 @@ export const homeData: HomeData = {
     valueProposition:
       "Creemos que un hogar no se habita, se sueña y se construye alrededor de tus anhelos más profundos; por eso transformamos tu estilo de vida, momentos e historias en arquitectura, construcción e interiorismo que inspiran todos los días, protegiendo tu patrimonio y dándote la tranquilidad de ver crecer a tu familia en el espacio perfecto para su vida.",
     ctaPrimary: "Iniciar mi proyecto",
-    specialties: ["Diseño", "Construcción", "Interiorismo"],
+    specialties: [
+      "Fidelidad al diseño",
+      "Certeza en nuestros procesos",
+      "Plusvalía garantizada",
+    ],
   },
   commercialPhrases: [
     {
@@ -103,7 +107,7 @@ export const homeData: HomeData = {
   ],
   services: [
     {
-      title: "01. Diseño + Construcción e Interiorismo",
+      title: "01. Diseño + Construcción",
       description:
         "Servicio integral que abarca desde la conceptualización creativa hasta el último detalle de acabado.",
       features: [
@@ -119,8 +123,27 @@ export const homeData: HomeData = {
       features: [
         "Fidelidad al Proyecto: Materializamos los planos respetando al 100% la visión estética.",
         "Ingeniería de Valor: Optimización de procesos para garantizar la más alta calidad en acabados.",
-        "Control Financiero - Precio Alzado: Presupuesto definitivo sin variaciones durante la ejecución.",
-        "Control Financiero - Precio Unitario: Presupuesto flexible donde pagas únicamente por el volumen exacto de obra ejecutado.",
+        "Control Financiero Total: Presupuesto definitivo sin variaciones o flexible según volumen de obra.",
+      ],
+    },
+    {
+      title: "03. Interiorismo",
+      description:
+        "Transformamos espacios en experiencias sensoriales 100% personalizadas que reflejan tu estilo de vida. Nos involucramos desde el diseño interior de los muros hasta el último detalle decorativo, abarcando prácticamente todo.",
+      features: [
+        "Diseño a tu Medida: Conceptualización integral y personalizada, partiendo desde la estructura interior de los muros.",
+        "Selección Curada: Mobiliario, arte y accesorios de diseño exclusivo adaptados a cada rincón.",
+        "Iluminación y Materialidad: Creación de atmósferas envolventes con texturas y acabados que elevan la percepción del lujo.",
+      ],
+    },
+    {
+      title: "04. Preventas",
+      description:
+        "Invierte con certeza en proyectos arquitectónicos de alta plusvalía antes de su conclusión.",
+      features: [
+        "Precios Especiales: Oportunidad de inversión con rendimientos superiores a la entrega.",
+        "Personalización Temprana: Adapta detalles a tus preferencias en las etapas iniciales.",
+        "Transparencia Financiera: Reportes de avance y esquemas de pago sumamente claros.",
       ],
     },
   ],

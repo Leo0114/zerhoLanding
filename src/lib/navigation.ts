@@ -6,9 +6,11 @@ export interface NavItem {
 
 export const HOME_SECTIONS: readonly NavItem[] = [
   { label: "Filosofía", id: "filosofia" },
-  { label: "Promesa", id: "promesa" },
+  { label: "Compromiso", id: "promesa" },
   { label: "Servicios", id: "servicios" },
   { label: "Garantía", id: "garantia" },
+  { label: "Trayectoria", id: "trayectoria" },
+  { label: "Equipo", id: "equipo" },
 ];
 
 export const CONTACT_PATH = "/contact";

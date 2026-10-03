@@ -17,29 +17,29 @@ const words = statement.split(/\s+/);
 ---
 
 <section id="filosofia" class="py-28 sm:py-36 lg:py-44">
-  <Container class="grid gap-12 lg:grid-cols-12 lg:gap-16">
-    <div class="reveal lg:col-span-3">
+  <Container class="flex flex-col items-center justify-center">
+    <div class="reveal mb-8">
       <Eyebrow>Nuestra filosofía</Eyebrow>
     </div>
 
-    <div class="lg:col-span-9">
+    <div class="w-full flex flex-col items-center">
       <p
-        class="statement font-display text-[clamp(1.75rem,3.2vw,2.75rem)] font-medium leading-[1.22] tracking-[-0.012em] text-ink"
+        class="statement italic font-display text-[clamp(1.125rem,2.2vw,1.5rem)] font-medium leading-[1.6] text-ink text-center max-w-4xl mx-auto"
       >
-        {words.map((word) => <span class="word">{word} </span>)}
+        "{words.map((word) => <span class="word">{word} </span>)}"
       </p>
 
-      <ol class="mt-16 grid gap-6 sm:grid-cols-3 sm:gap-8 lg:mt-20">
+      <ol class="mt-16 grid w-full gap-6 sm:grid-cols-3 sm:gap-12 lg:mt-24">
         {
           specialties.map((specialty, i) => (
             <li
-              class="reveal flex items-baseline gap-4 border-t border-ink/12 pt-5 sm:flex-col sm:gap-3"
+              class="reveal flex flex-col items-center text-center gap-3 border-t sm:border-t-0 sm:border-l border-ink/12 pt-6 sm:pt-0 sm:pl-8"
               style={`--reveal-delay: ${i * 70}ms`}
             >
               <span class="text-xs font-semibold tabular-nums tracking-[0.14em] text-warmGray">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <span class="font-display text-[1.75rem] font-medium leading-none tracking-[-0.01em]">
+              <span class="font-display text-xl md:text-2xl font-medium leading-tight tracking-[-0.01em]">
                 {specialty}
               </span>
             </li>

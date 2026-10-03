@@ -1,21 +1,26 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import Hero from "@/components/home/Hero.astro";
+import HeroSlider from "@/components/home/HeroSlider";
 import Philosophy from "@/components/home/Philosophy.astro";
 import Promises from "@/components/home/Promises.astro";
 import Services from "@/components/home/Services.astro";
 import Warranty from "@/components/home/Warranty.astro";
 import ContactCta from "@/components/home/ContactCta.astro";
 import { homeData } from "@/api/home";
+import { CONTACT_PATH } from "@/lib/navigation";
 
 export const prerender = true;
 
-const { hero, commercialPhrases, services, warrantyAndValue, contact } = homeData;
+const { hero, commercialPhrases, services, warrantyAndValue, contact } =
+  homeData;
 ---
 
 <Layout>
-  <Hero hero={hero} />
-  <Philosophy statement={hero.valueProposition} specialties={hero.specialties} />
+  <HeroSlider client:load hero={hero} contactPath={CONTACT_PATH} />
+  <Philosophy
+    statement={hero.valueProposition}
+    specialties={hero.specialties}
+  />
   <Promises phrases={commercialPhrases} />
   <Services services={services} />
   <Warranty warranty={warrantyAndValue} />
