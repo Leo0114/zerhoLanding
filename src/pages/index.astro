@@ -19,10 +19,7 @@ const { hero, commercialPhrases, services, warrantyAndValue, contact } =
 
 <Layout>
   <HeroSlider client:load hero={hero} contactPath={CONTACT_PATH} />
-  <Philosophy
-    statement={hero.valueProposition}
-    specialties={hero.specialties}
-  />
+  <Philosophy statement={hero.valueProposition} />
   <Promises phrases={commercialPhrases} />
   <Services services={services} />
   <Warranty warranty={warrantyAndValue} />

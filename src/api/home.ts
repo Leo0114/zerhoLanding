@@ -129,9 +129,9 @@ export const homeData: HomeData = {
     {
       title: "03. Interiorismo",
       description:
-        "Transformamos espacios en experiencias sensoriales 100% personalizadas que reflejan tu estilo de vida. Nos involucramos desde el diseño interior de los muros hasta el último detalle decorativo, abarcando prácticamente todo.",
+        "Transformamos espacios en experiencias sensoriales 100% personalizadas que reflejan tu estilo de vida. Nos involucramos con el alcance que tú decidas: desde el diseño integral de la estructura de muros hasta el último detalle decorativo, o solo en la etapa específica que tu proyecto requiera.",
       features: [
-        "Diseño a tu Medida: Conceptualización integral y personalizada, partiendo desde la estructura interior de los muros.",
+        "Diseño a tu Medida: Conceptualización integral y personalizada, adaptándonos al nivel de intervención que elijas.",
         "Selección Curada: Mobiliario, arte y accesorios de diseño exclusivo adaptados a cada rincón.",
         "Iluminación y Materialidad: Creación de atmósferas envolventes con texturas y acabados que elevan la percepción del lujo.",
       ],
